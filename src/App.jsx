@@ -19,7 +19,7 @@ function App() {
       id: Date.now(),
       title,
       text,
-      status: false
+      status: "todo"
     }
     setTarefas([...tarefas, novaTarefa])
     setTitle('')
@@ -37,15 +37,28 @@ function App() {
   function toggleTask(id) {
     const taskUpdated = tarefas.map((tarefa) => { // map percorre as tarefas e quando encontra o id retorna uma nova versão dela
       if (tarefa.id === id) {
+        let novoStatus
+
+        if (tarefa.status === "todo") {
+          novoStatus = "doing"
+        } else if (tarefa.status === "doing") {
+          novoStatus = "done"
+        } else {
+          novoStatus = "todo"
+        }
         return {
           ...tarefa,
-          status: !tarefa.status // inverte o status da nova tarefa (true vira false || false vira true)
+          status: novoStatus
         }
       }
       return tarefa
     })
     setTarefas(taskUpdated)
   }
+
+  const todoTasks = tarefas.filter((tarefa) => tarefa.status === "todo")
+  const doingTasks = tarefas.filter((tarefa) => tarefa.status === "doing")
+  const doneTasks = tarefas.filter((tarefa) => tarefa.status === "done")
 
   return (
     <main className="app-page">
@@ -81,15 +94,41 @@ function App() {
           <Button onClick={ addTask } name="Adicionar"/>
         </section>
 
-        <section className="task-list">
-          {tarefas.map((tarefa) => (
-            <TaskCard
-              key={ tarefa.id }
-              tarefa={ tarefa }
-              removeTask={ removeTask }
-              toggleTask={ toggleTask }
-            />
-          ))}
+        <section className="tark-board">
+          <div className="todo-column">
+            <h2>A Fazer</h2>
+            {todoTasks.map((todo) => (
+              <TaskCard
+                key={ todo.id }
+                tarefa={ todo }
+                removeTask={ removeTask }
+                toggleTask={ toggleTask }
+              />
+            ))}
+          </div>
+          <div className="doing-column">
+            <h2>Em Progresso</h2>
+            {doingTasks.map((doing) => (
+              <TaskCard
+                key={ doing.id }
+                tarefa={ doing }
+                removeTask={ removeTask }
+                toggleTask={ toggleTask }
+              />
+            ))}
+          </div>
+          <div className="done-column">
+            <h2>Feito</h2>
+            {doneTasks.map((done) => (
+              <TaskCard
+                key={ done.id }
+                tarefa={ done }
+                removeTask={ removeTask }
+                toggleTask={ toggleTask }
+              />
+            ))}
+          </div>
+            
         </section>
       </section>
     </main>
