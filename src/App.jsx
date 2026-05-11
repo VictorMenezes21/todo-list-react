@@ -4,16 +4,7 @@ import Button from "./components/Button";
 import "./App.css"
 
 function App() {
-  const [tarefas, setTarefas] = useState(
-    [
-      {
-        id: 1,
-        title: 'Passear com o Tobias',
-        text: 'Levar o Tobias para passear de manhã até o parque',
-        status: false
-      }
-    ]
-  );
+  const [tarefas, setTarefas] = useState([]);
   /* Criando um useState para title */
   const [title, setTitle] = useState(''); /* Declarando a variável state*/
   /* Criando um useState para text */
@@ -79,15 +70,15 @@ function App() {
           <div className="input-group">
           <label>
             Description: 
-            <input
-              value={ text }
-              onChange={e => setText(e.target.value)}
-              placeholder="Ex: Revisar useState e props"
-            />
+            <textarea 
+            value={ text }
+            onChange={e => setText(e.target.value)}
+            placeholder="Ex: Revisar useState e props">              
+            </textarea>
           </label>
           </div>
 
-          <Button onClick={ addTask } name="To Add"/>
+          <Button onClick={ addTask } name="Adicionar"/>
         </section>
 
         <section className="task-list">
