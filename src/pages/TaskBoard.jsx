@@ -1,6 +1,11 @@
 import TaskCard from "../components/TaskCard"
+import { Link } from "react-router-dom"
 
 export default function TaskBoard({tarefas, removeTask, toggleTask}) {
+
+    const todoTasks = tarefas.filter((tarefa) => tarefa.status === "todo")
+    const doingTasks = tarefas.filter((tarefa) => tarefa.status === "doing")
+    const doneTasks = tarefas.filter((tarefa) => tarefa.status === "done")
 
     return (
         <main className="task-board">
@@ -36,7 +41,10 @@ export default function TaskBoard({tarefas, removeTask, toggleTask}) {
                         toggleTask={ toggleTask }
                     />
                     ))}
-            </div>            
+            </div> 
+            <Link to="/">
+                <button>Voltar</button>
+            </Link>          
         </main>
     )
 }

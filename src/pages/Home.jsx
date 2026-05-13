@@ -1,10 +1,8 @@
 import Button from "../components/Button"
+import { Link } from "react-router-dom"
+
 
 export default function Home({title, text, setTitle, setText, addTask}) {
-
-    const todoTasks = tarefas.filter((tarefa) => tarefa.status === "todo")
-    const doingTasks = tarefas.filter((tarefa) => tarefa.status === "doing")
-    const doneTasks = tarefas.filter((tarefa) => tarefa.status === "done")
     
     return (
         <main className="app-page">
@@ -39,6 +37,9 @@ export default function Home({title, text, setTitle, setText, addTask}) {
 
                     <Button onClick={ addTask } name="Adicionar"/>
                 </section>
+                <Link to="/board">
+                    <button>Kanban</button>
+                </Link>
             </section>
         </main>
     )
