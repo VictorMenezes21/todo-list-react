@@ -1,11 +1,18 @@
 import { useState } from "react"
 import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
 import Home from "./pages/Home"
 import TaskBoard from "./pages/TaskBoard"
 import "./App.css"
 
 function App() {
-  const [tarefas, setTarefas] = useState([]);
+  const [tarefas, setTarefas] = useState(() => {
+    const tarefasSalvas = localStorage.getItem("tarefas")
+    if (tarefasSalvas) {
+      return JSON.parse(tarefasSalvas)
+    }
+    return []
+  });
   /* Criando um useState para title */
   const [title, setTitle] = useState(''); /* Declarando a variável state*/
   /* Criando um useState para text */
@@ -56,6 +63,11 @@ function App() {
     })
     setTarefas(taskUpdated)
   }
+
+  /* Criando função useEffect para salvar no LocalStorage*/
+  useEffect(() => {
+    localStorage.setItem("tarefas", JSON.stringify(tarefas))
+  }, [tarefas])
 
   return (
 
