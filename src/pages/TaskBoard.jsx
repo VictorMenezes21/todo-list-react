@@ -1,51 +1,93 @@
 import TaskCard from "../components/TaskCard"
+import Button from "../components/Button"
 import { Link } from "react-router-dom"
 
-export default function TaskBoard({tarefas, removeTask, toggleTask}) {
+export default function TaskBoard({ tarefas, removeTask, toggleTask, moveTaskBack, reopenTask, theme, toggleTheme }) {
+  const todoTasks = tarefas.filter((tarefa) => tarefa.status === "todo")
+  const doingTasks = tarefas.filter((tarefa) => tarefa.status === "doing")
+  const doneTasks = tarefas.filter((tarefa) => tarefa.status === "done")
+  const columns = [
+    {
+      key: "todo",
+      title: "A Fazer",
+      hint: "Ideias e tarefas prontas para comecar.",
+      tasks: todoTasks,
+    },
+    {
+      key: "doing",
+      title: "Em Andamento",
+      hint: "Itens em execucao no momento.",
+      tasks: doingTasks,
+    },
+    {
+      key: "done",
+      title: "Concluido",
+      hint: "Entregas finalizadas no fluxo.",
+      tasks: doneTasks,
+    },
+  ]
 
-    const todoTasks = tarefas.filter((tarefa) => tarefa.status === "todo")
-    const doingTasks = tarefas.filter((tarefa) => tarefa.status === "doing")
-    const doneTasks = tarefas.filter((tarefa) => tarefa.status === "done")
+  return (
+    <main className="board-page">
+      <section className="board-shell">
+        <header className="board-header">
+          <div>
+            <div className="top-bar">
+              <span className="eyebrow">Task Board</span>
+              <Button
+                onClick={toggleTheme}
+                variant="theme"
+                name={theme === "light" ? "Modo Escuro" : "Modo Claro"}
+              />
+            </div>
+            <h1>Fluxo visual das tarefas</h1>
+            <p>Quadro Kanban com tres colunas reais, cards modernos e leitura clara em dark mode.</p>
+          </div>
+          <div className="board-summary" aria-label="Resumo do quadro">
+            <span>{tarefas.length} tarefas</span>
+            <span>Fluxo: A Fazer / Em Andamento / Concluido</span>
+          </div>
+        </header>
 
-    return (
-        <main className="task-board">
-            <div className="todo-column">
-                <h2>A Fazer</h2>
-                {todoTasks.map((todo) => (
-                    <TaskCard
-                        key={ todo.id }
-                        tarefa={ todo }
-                        removeTask={ removeTask }
-                        toggleTask={ toggleTask }
-                    />
-                ))}
-            </div>
-            <div className="doing-column">
-                <h2>Em Progresso</h2>
-                {doingTasks.map((doing) => (
-                    <TaskCard
-                        key={ doing.id }
-                        tarefa={ doing }
-                        removeTask={ removeTask }
-                        toggleTask={ toggleTask }
-                    />
-                ))}
-            </div>
-            <div className="done-column">
-                <h2>Feito</h2>
-                {doneTasks.map((done) => (
-                    <TaskCard
-                        key={ done.id }
-                        tarefa={ done }
-                        removeTask={ removeTask }
-                        toggleTask={ toggleTask }
-                    />
-                    ))}
-            </div> 
-            <Link to="/">
-                <button>Voltar</button>
-            </Link>          
-        </main>
-    )
+        <section className="task-board" aria-label="Quadro kanban">
+          {columns.map((column) => (
+            <section key={column.key} className={`board-column board-column--${column.key}`}>
+              <header className="board-column__header">
+                <div>
+                  <h2>{column.title}</h2>
+                  <p>{column.hint}</p>
+                </div>
+                <span className="board-column__count">{column.tasks.length}</span>
+              </header>
+
+              <div className="board-column__body">
+                {column.tasks.length > 0 ? column.tasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    tarefa={task}
+                    removeTask={removeTask}
+                    toggleTask={toggleTask}
+                    moveTaskBack={moveTaskBack}
+                    reopenTask={reopenTask}
+                  />
+                )) : (
+                  <div className="empty-column">
+                    <span className="empty-column__icon">+</span>
+                    <p>Nenhuma tarefa nesta etapa.</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          ))}
+        </section>
+
+        <div className="board-footer">
+          <p className="helper-copy">Agora cada etapa tem acoes especificas para avancar, voltar ou reabrir tarefas.</p>
+          <Link to="/" className="link-reset">
+            <button className="app-button app-button--secondary">Voltar</button>
+          </Link>
+        </div>
+      </section>
+    </main>
+  )
 }
-

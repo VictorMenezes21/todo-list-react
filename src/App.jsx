@@ -1,76 +1,106 @@
-import { useState } from "react"
-import { Route, Routes } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"
+import { Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import TaskBoard from "./pages/TaskBoard"
 import "./App.css"
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme")
+
+    if (savedTheme === "light" || savedTheme === "dark") {
+      return savedTheme
+    }
+
+    return "dark"
+  })
+
   const [tarefas, setTarefas] = useState(() => {
     const tarefasSalvas = localStorage.getItem("tarefas")
+
     if (tarefasSalvas) {
       return JSON.parse(tarefasSalvas)
     }
+
     return []
-  });
-  /* Criando um useState para title */
-  const [title, setTitle] = useState(''); /* Declarando a variável state*/
-  /* Criando um useState para text */
-  const [text, setText] = useState('');
-  
-  /* Criando função Adicionar Tarefa */
+  })
+
+  const [title, setTitle] = useState("")
+  const [text, setText] = useState("")
+
   function addTask() {
-    if (title.trim() === '' || text.trim() === ''){
+    if (title.trim() === "" || text.trim() === "") {
       return
     }
+
     const novaTarefa = {
       id: Date.now(),
       title,
       text,
-      status: "todo"
+      status: "todo",
     }
+
     setTarefas([...tarefas, novaTarefa])
-    setTitle('')
-    setText('')
+    setTitle("")
+    setText("")
   }
 
-  /* Criando função de remover tarefa */
   function removeTask(id) {
     const taskFilter = tarefas.filter((tarefa) => tarefa.id !== id)
-
     setTarefas(taskFilter)
   }
 
-  /* Criando função para concluir a tarefa */
-  function toggleTask(id) {
-    const taskUpdated = tarefas.map((tarefa) => { // map percorre as tarefas e quando encontra o id retorna uma nova versão dela
+  function updateTaskStatus(id, status) {
+    const taskUpdated = tarefas.map((tarefa) => {
       if (tarefa.id === id) {
-        let novoStatus
-
-        if (tarefa.status === "todo") {
-          novoStatus = "doing"
-        } else if (tarefa.status === "doing") {
-          novoStatus = "done"
-        } else {
-          novoStatus = "todo"
-        }
         return {
           ...tarefa,
-          status: novoStatus
+          status,
         }
       }
+
       return tarefa
     })
+
     setTarefas(taskUpdated)
   }
 
-  /* Criando função useEffect para salvar no LocalStorage*/
+  function toggleTask(id) {
+    const tarefa = tarefas.find((item) => item.id === id)
+
+    if (!tarefa) {
+      return
+    }
+
+    if (tarefa.status === "todo") {
+      updateTaskStatus(id, "doing")
+    } else if (tarefa.status === "doing") {
+      updateTaskStatus(id, "done")
+    }
+  }
+
+  function moveTaskBack(id) {
+    updateTaskStatus(id, "todo")
+  }
+
+  function reopenTask(id) {
+    updateTaskStatus(id, "todo")
+  }
+
   useEffect(() => {
     localStorage.setItem("tarefas", JSON.stringify(tarefas))
   }, [tarefas])
 
-  return (
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme)
+    localStorage.setItem("theme", theme)
+  }, [theme])
 
+  function toggleTheme() {
+    setTheme((currentTheme) => currentTheme === "light" ? "dark" : "light")
+  }
+
+  return (
     <Routes>
       <Route
         path="/"
@@ -81,7 +111,10 @@ function App() {
             setTitle={setTitle}
             setText={setText}
             addTask={addTask}
-          />}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        }
       />
       <Route
         path="/board"
@@ -90,7 +123,12 @@ function App() {
             tarefas={tarefas}
             removeTask={removeTask}
             toggleTask={toggleTask}
-          />}
+            moveTaskBack={moveTaskBack}
+            reopenTask={reopenTask}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        }
       />
     </Routes>
   )

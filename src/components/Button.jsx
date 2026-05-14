@@ -1,5 +1,7 @@
-export default function Button({ name, onClick }) {
+export default function Button({ name, onClick, variant = "default", className = "" }) {
   return (
-    <button onClick={ onClick }>{ name }</button>
+    <button className={`app-button app-button--${variant} ${className}`.trim()} onClick={ onClick }>
+      { name }
+    </button>
   )
 }
